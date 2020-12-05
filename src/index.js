@@ -17,7 +17,7 @@ app.get("/newFeeds",(req,res)=>{
         if (err) {
           res.send(err);
         } else {
-            newRes = []
+           let newRes = []
           for(let i=0;i<limit;i++){
              newRes.push(result[i]);
           }
@@ -43,7 +43,7 @@ app.get("/newFeeds/:limit",(req,res)=>{
         if (err) {
           res.send(err);
         } else {
-            newRes = []
+           let newRes = []
           for(let i=0;i<limit;i++){
              newRes.push(result[i]);
           }
@@ -68,7 +68,7 @@ app.get("/newFeeds/:limit/:offset",(req,res)=>{
         if (err) {
           res.send(err);
         } else {
-            newRes = []
+            let newRes = []
           for(let i=0;i<limit;i++){
              newRes.push(result[i]);
           }
