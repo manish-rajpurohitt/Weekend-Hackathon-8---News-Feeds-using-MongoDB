@@ -10,10 +10,27 @@ const onePageArticleCount = 10
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.get("/newFeeds",(req,res)=>{
+    let limit = 10;
+    let offset = 0;
+    newsArticleModel.find({}, function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+            newRes = []
+          for(let i=0;i<limit;i++){
+             newRes.push(result[i]);
+          }
+          for(let i=0;i<offset;i++){
+              newRes.pop();
+          }
+          console.log(newRes.length);
+          res.status(200).send(newRes);
+        }
+      });
+})
 
 app.get("/newFeeds/:limit/:offset",(req,res)=>{
-    
-    
     let par = req.params;
     let limit = 10;
     let offset = 0;
@@ -36,7 +53,7 @@ app.get("/newFeeds/:limit/:offset",(req,res)=>{
               newRes.pop();
           }
           console.log(newRes.length);
-          res.send(newRes);
+          res.status(200).send(newRes);
         }
       });
 })
