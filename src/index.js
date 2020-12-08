@@ -10,76 +10,39 @@ const onePageArticleCount = 10
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.get("/newFeeds",(req,res)=>{
-    let limit = 10;
-    let offset = 0;
-    newsArticleModel.find({}, function(err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-           let newRes = []
-          for(let i=0;i<limit;i++){
-             newRes.push(result[i]);
-          }
-          for(let i=0;i<offset;i++){
-              newRes.pop();
-          }
-          console.log(newRes.length);
-          res.status(200).send(newRes);
+let defLimit= 10, defOffset= 0;
+app.get('/newFeeds',(req,res)=>{
+    let limitReceived= (req.query.limit);
+    let offsetReceived= (req.query.offset);
+    let limit,offset;
+    limit=parseInt(Number(limitReceived));
+    offset= parseInt(Number(offsetReceived));
+    if(!limitReceived){
+        limit= defLimit;
+    }
+    if(!offsetReceived){
+        offset= defOffset;
+    }
+    if(isNaN(offset)){
+        offset=defOffset;
+    }
+    if(isNaN(limit)){
+        limit=defLimit;
+        if(!offsetReceived){
+            offset=defOffset;
         }
-      });
+    }
+    newsArticleModel.find().then(result=>{
+        let start= 0;
+        start+= offset;
+        let resultArray=[];
+        for(let startIndex= start;startIndex<start+limit;startIndex++){
+            resultArray.push(result[startIndex]);
+        }
+        res.json(resultArray);
+    }).catch(_=> res.json([]));
 })
 
-
-app.get("/newFeeds/:limit",(req,res)=>{
-    let par = req.params;
-    let limit = 10;
-    let offset = 0;
-    if(!isNaN(Number(par.limit))){
-        limit = par.limit;
-    }
-
-    newsArticleModel.find({}, function(err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-           let newRes = []
-          for(let i=0;i<limit;i++){
-             newRes.push(result[i]);
-          }
-          console.log(newRes.length);
-          res.status(200).send(newRes);
-        }
-      });
-})
-
-app.get("/newFeeds/:limit/:offset",(req,res)=>{
-    let par = req.params;
-    let limit = 10;
-    let offset = 0;
-    if(!isNaN(Number(par.limit))){
-        limit = par.limit;
-    }
-    if(!isNaN(Number(par.offset))){
-        offset = par.offset;
-    }
-
-    newsArticleModel.find({}, function(err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-            let newRes = []
-          for(let i=0;i<limit;i++){
-             newRes.push(result[i]);
-          }
-          for(let i=0;i<offset;i++){
-              newRes.pop();
-          }
-          console.log(newRes.length);
-          res.status(200).send(newRes);
-        }
-      });
-})
 
 
 app.listen(port, () => console.log(`App listening on port ${port}!`))
